@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contador V</title>
+    <!-- Inclui a biblioteca Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Configura a paleta de cores personalizada para Tailwind
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'primary-purple': '#4a097d',
+                        'light-purple': '#6a0dad',
+                        'dark-purple': '#360655',
+                        'light-rose': '#b00202',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Cormorant Garamond', 'serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Inter:wght@400;700&display=swap');
+
+        /* Oculta o scrollbar para uma aparência mais limpa */
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        body {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Estilos específicos para o canvas */
+        canvas {
+            background-color: white;
+            border-radius: 1rem;
+            /* Borda arredondada maior */
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+            max-width: 90%;
+            height: auto;
+            border: 4px solid #4a097d;
+            /* Adiciona uma borda roxa */
+        }
+    </style>
+</head>
+
+<body class="bg-gradient-to-br from-light-purple to-dark-purple flex justify-center items-center min-h-screen p-4">
+    <div id="loading" class="text-white text-xl font-sans animate-pulse">
+        Carregando...
+    </div>
+    <canvas id="myCanvas" class="hidden"></canvas>
+
+    <script>
+        const canvas = document.getElementById('myCanvas');
+        const ctx = canvas.getContext('2d');
+        const loadingDiv = document.getElementById('loading');
+
+        // Define a data final para 26 de setembro do ano atual
+        const targetDate = new Date(new Date().getFullYear(), 8, 26);
+
+       
+        const images = {
+            rosary: { src: 'terco.png', img: new Image(), loaded: false },
+            rose: { src: 'rosaejc.png', img: new Image(), loaded: false }
+        };
+
+        let imagesToLoad = Object.keys(images).length;
+
+        // Função para carregar todas as imagens
+        function loadImages() {
+            for (const key in images) {
+                images[key].img.src = images[key].src;
+                images[key].img.onload = () => {
+                    images[key].loaded = true;
+                    imagesToLoad--;
+                    if (imagesToLoad === 0) {
+                        // Quando todas as imagens estiverem carregadas, exibe o canvas
+                        loadingDiv.classList.add('hidden');
+                        canvas.classList.remove('hidden');
+                        update();
+                    }
+                };
+            }
+        }
+
+        let daysLeft = 0;
+
+        // Função para calcular os dias restantes
+        function calculateDays() {
+            const today = new Date();
+            const timeDifference = targetDate.getTime() - today.getTime();
+            daysLeft = Math.max(0, Math.ceil(timeDifference / (1000 * 60 * 60 * 24)));
+        }
+
+        // Função principal para desenhar no canvas
+        function drawCanvas() {
+            // Ajusta o tamanho do canvas para a proporção 16:9
+            const ratio = 16 / 9;
+            const screenWidth = window.innerWidth > 1200 ? 1200 : window.innerWidth * 0.9;
+            canvas.width = screenWidth;
+            canvas.height = canvas.width / ratio;
+
+            // Limpa o canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Posições
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            // --- Desenho das Imagens ---
+            if (images.rosary.loaded) {
+                const rosaryWidth = canvas.width * 0.30;
+                const rosaryHeight = (rosaryWidth / images.rosary.img.width) * images.rosary.img.height;
+                ctx.drawImage(images.rosary.img, centerX * 0.4 - rosaryWidth / 2, centerY - rosaryHeight / 2, rosaryWidth, rosaryHeight);
+            }
+            if (images.rose.loaded) {
+                const roseWidth = canvas.width * 0.25;
+                const roseHeight = (roseWidth / images.rose.img.width) * images.rose.img.height;
+                ctx.drawImage(images.rose.img, centerX * 1.6 - roseWidth / 2, centerY - roseHeight / 2 + (canvas.height * 0.05), roseWidth, roseHeight);
+            }
+
+            // --- Desenho do Texto ---
+            ctx.textAlign = 'center';
+
+            // Título "Faltam"
+            ctx.font = `700 ${canvas.width * 0.04}px "Cormorant Garamond", serif`;
+            ctx.fillStyle = '#4a097d';
+            ctx.fillText('Faltam', centerX, centerY - canvas.height * 0.15);
+
+            // Número de dias
+            ctx.font = `700 ${canvas.width * 0.12}px "Cormorant Garamond", serif`;
+            ctx.fillStyle = '#b00202';
+            ctx.fillText(daysLeft, centerX, centerY - canvas.height * 0.05);
+
+            // Subtítulo "DIAS"
+            ctx.font = `700 ${canvas.width * 0.04}px "Cormorant Garamond", serif`;
+            ctx.fillStyle = '#4a097d';
+            ctx.fillText('DIAS', centerX, centerY + canvas.height * 0.07);
+
+            // Texto do lado esquerdo
+            ctx.font = `400 ${canvas.width * 0.025}px "Cormorant Garamond", serif`;
+            ctx.fillStyle = '#4a097d';
+            ctx.fillText('O essencial é', centerX * 0.4, centerY - canvas.height * 0.15);
+            ctx.fillText('invisível aos', centerX * 0.4, centerY - canvas.height * 0.10);
+            ctx.fillText('olhos', centerX * 0.4, centerY - canvas.height * 0.05);
+            ctx.font = `400 ${canvas.width * 0.02}px "Cormorant Garamond", serif`;
+            ctx.fillText('Pro V EJC', centerX, centerY + canvas.height * 0.16);
+
+            // Texto do lado direito
+            ctx.font = `400 ${canvas.width * 0.025}px "Cormorant Garamond", serif`;
+            ctx.fillStyle = '#4a097d';
+            ctx.fillText('O importante', centerX * 1.6, centerY - canvas.height * 0.15);
+            ctx.fillText('é a rosa', centerX * 1.6, centerY - canvas.height * 0.10);
+        }
+
+        function update() {
+            calculateDays();
+            drawCanvas();
+            // Atualiza o canvas a cada 24 horas
+            setTimeout(update, 1000 * 60 * 60 * 24);
+        }
+
+        window.onload = function () {
+            loadImages();
+            window.addEventListener('resize', drawCanvas);
+        };
+    </script>
+</body>
+
+</html>
