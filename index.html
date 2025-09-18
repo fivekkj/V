@@ -103,8 +103,9 @@
 
         // Função principal para desenhar no canvas
         function drawCanvas() {
-            // Ajusta o tamanho do canvas para a proporção 16:9
-            const ratio = 16 / 9;
+            // Ajusta o tamanho do canvas de forma responsiva
+            const isMobile = window.innerWidth < 768;
+            const ratio = isMobile ? 1 : 16 / 9; // Proporção quadrada (1:1) para mobile, 16:9 para desktop
             const screenWidth = window.innerWidth > 1200 ? 1200 : window.innerWidth * 0.9;
             canvas.width = screenWidth;
             canvas.height = canvas.width / ratio;
@@ -144,19 +145,19 @@
             // Subtítulo "DIAS"
             ctx.font = `700 ${canvas.width * 0.04}px "Cormorant Garamond", serif`;
             ctx.fillStyle = '#4a097d';
-            ctx.fillText('DIAS', centerX, centerY + canvas.height * 0.07);
+            ctx.fillText('DIAS', centerX, centerY + canvas.height * 0.06);
 
             // Texto do lado esquerdo
-            ctx.font = `400 ${canvas.width * 0.025}px "Cormorant Garamond", serif`;
+            ctx.font = `400 ${canvas.width * 0.035}px "Cormorant Garamond", serif`;
             ctx.fillStyle = '#4a097d';
             ctx.fillText('O essencial é', centerX * 0.4, centerY - canvas.height * 0.15);
             ctx.fillText('invisível aos', centerX * 0.4, centerY - canvas.height * 0.10);
             ctx.fillText('olhos', centerX * 0.4, centerY - canvas.height * 0.05);
-            ctx.font = `400 ${canvas.width * 0.02}px "Cormorant Garamond", serif`;
-            ctx.fillText('Pro V EJC', centerX, centerY + canvas.height * 0.16);
+            ctx.font = `700 ${canvas.width * 0.03}px "Cormorant Garamond", serif`;
+            ctx.fillText('Pro V EJC', centerX, centerY + canvas.height * 0.20);
 
             // Texto do lado direito
-            ctx.font = `400 ${canvas.width * 0.025}px "Cormorant Garamond", serif`;
+            ctx.font = `400 ${canvas.width * 0.040}px "Cormorant Garamond", serif`;
             ctx.fillStyle = '#4a097d';
             ctx.fillText('O importante', centerX * 1.6, centerY - canvas.height * 0.15);
             ctx.fillText('é a rosa', centerX * 1.6, centerY - canvas.height * 0.10);
